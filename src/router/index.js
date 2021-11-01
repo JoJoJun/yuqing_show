@@ -109,7 +109,7 @@ export const constantRoutes = [
     path: '/edit',
     component: Layout,
     redirect: '/edit/table',
-    name: 'Example',
+    name: 'Edit',
     meta: { title: '数据标注', icon: 'el-icon-edit-outline' },
     children: [
       {
@@ -215,7 +215,7 @@ export const constantRoutes = [
 ]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
+  mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })

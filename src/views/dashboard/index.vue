@@ -69,6 +69,7 @@ export default {
   methods: {
     handleSetLineChartData() {
       this.lineChartData = lineChartData['newVisitis']
+      console.log("in dashboard")
     },
     drawChart() {
       // const myEchart = this.$echarts.init(document.getElementById('all_text_num_chart'));

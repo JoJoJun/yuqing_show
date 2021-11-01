@@ -43,10 +43,10 @@
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
 
-      <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span> password: any</span>
-      </div>
+<!--      <div class="tips">-->
+<!--        <span style="margin-right:20px;">username: admin</span>-->
+<!--        <span> password: any</span>-->
+<!--      </div>-->
 
     </el-form>
   </div>
@@ -54,7 +54,7 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
-
+import axios from 'axios'
 export default {
   name: 'Login',
   data() {
@@ -66,16 +66,16 @@ export default {
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+      if (value.length < 3) {
+        callback(new Error('The password can not be less than 3 digits'))
       } else {
         callback()
       }
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -106,21 +106,71 @@ export default {
       })
     },
     handleLogin() {
+      console.log("in login")
       this.$refs.loginForm.validate(valid => {
         if (valid) {
+          console.log("is valid")
+          // debugger
           this.loading = true
+          console.log("this.loading")
           this.$store.dispatch('user/login', this.loginForm).then(() => {
+            console.log("in dispatch")
             this.$router.push({ path: this.redirect || '/' })
+            console.log("after router")
             this.loading = false
           }).catch(() => {
             this.loading = false
+            console.log("in catch")
           })
+          this.$router.push({ path: this.redirect || '/' })
         } else {
           console.log('error submit!!')
           return false
         }
       })
     }
+    // handleLogin() {
+    //   console.log("in handle login")
+    //   // this.$router.push({ path: '/' })
+    //   // var param = {
+    //   //   'username': this.loginForm.username,
+    //   //   'password': this.loginForm.password
+    //   // }
+    //   // this.loading = true
+    //   // console.log(param.username)
+    //   // this.axios.post("/account/login/", param).then(
+    //   //     res => {
+    //   //       console.log(res.data.status)
+    //   //       console.log(res.data.msg)
+    //   //       var status = res.data.status
+    //   //       if (status == 0) {
+    //   //         console.log("status is 0")
+    //   //         this.$router.push({ path: this.redirect || '/' })
+    //   //         this.loading = false
+    //   //       }
+    //   //     }
+    //   // ).catch(res => {
+    //   //   console.log(res.data.status)
+    //   //   console.log(res.data.msg)
+    //   // })
+    //   // this.loading = false
+    //
+    //
+    //   this.$refs.loginForm.validate(valid => {
+    //     if (valid) {
+    //       this.loading = true
+    //       this.$store.dispatch('user/login', this.loginForm).then(() => {
+    //         this.$router.push({ path: this.redirect || '/' })
+    //         this.loading = false
+    //       }).catch(() => {
+    //         this.loading = false
+    //       })
+    //     } else {
+    //       console.log('error submit!!')
+    //       return false
+    //     }
+    //   })
+    // }
   }
 }
 </script>
