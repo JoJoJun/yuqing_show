@@ -25,10 +25,19 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      chartX: [ '口味', '环境', '服务', '装修'],
+      chartY: [
+        // { value: 320, name: '全部' },
+        { value: 240, name: '口味' },
+        { value: 149, name: '环境' },
+        { value: 100, name: '服务' },
+        { value: 59, name: '装修' }
+      ]
     }
   },
   mounted() {
+    this.requestLineChartData()
     this.$nextTick(() => {
       this.initChart()
     })
@@ -41,6 +50,23 @@ export default {
     this.chart = null
   },
   methods: {
+    requestLineChartData() {
+      this.axios.get("/dash_asp_nums").then(
+          res => {
+            console.log(res.data.status)
+            var status = res.data.status
+            if (status == 0) {
+              // console.log("status is 0, pos_list = ",res.data.pos_list)
+              this.chartX = res.data.asp_list
+              this.chartY = res.data.asp_dic
+              this.initChart()
+            }
+          }
+      ).catch(res => {
+        console.log(res.data.status)
+        console.log(res.data.msg)
+      })
+    },
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
 
@@ -52,7 +78,7 @@ export default {
         legend: {
           left: 'center',
           bottom: '10',
-          data: [ '口味', '环境', '服务', '装修']
+          data: this.chartX
         },
         series: [
           {
@@ -61,13 +87,7 @@ export default {
             roseType: 'radius',
             radius: [15, 95],
             center: ['50%', '38%'],
-            data: [
-              // { value: 320, name: '全部' },
-              { value: 240, name: '口味' },
-              { value: 149, name: '环境' },
-              { value: 100, name: '服务' },
-              { value: 59, name: '装修' }
-            ],
+            data: this.chartY ,
             animationEasing: 'cubicInOut',
             animationDuration: 2600
           }

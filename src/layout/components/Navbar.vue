@@ -5,10 +5,14 @@
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
+      <span class="el-breadcrumb__inner">
+        <span class="no-redirect">登出</span>
+      </span>
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
-          <i class="el-icon-caret-bottom" />
+<!--          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">-->
+<!--          <i class="el-icon-caret-bottom" />-->
+
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
@@ -83,7 +87,13 @@ export default {
   .breadcrumb-container {
     float: left;
   }
-
+.el-breadcrumb__inner {
+  color: #97a8be;
+  cursor: text;
+  font-weight: 400 !important;
+  font-size: 14px;
+  line-height: 50px;
+}
   .right-menu {
     float: right;
     height: 100%;

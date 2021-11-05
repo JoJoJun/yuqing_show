@@ -12,10 +12,15 @@
       <el-row>
         <el-col :span="2" />
         <el-col :span="14" style="text-align: center;">
+<!--          <el-image-->
+<!--            style="width: 700px; height: 400px"-->
+<!--            :src="url"-->
+<!--            :fit="fit"-->
+<!--          />-->
           <el-image
-            style="width: 700px; height: 400px"
-            :src="url"
-            :fit="fit"
+              style="width: 700px; height: 400px"
+              :src="'data:image/png;base64,'+pic"
+              :fit="fit"
           />
         </el-col>
         <el-col :span="8">
@@ -85,35 +90,86 @@ export default {
       myChart: null,
       // 获取网页可见区域宽
       screenWidth: document.body.clientWidth,
-      hotwords: [
-        {word : '吃', freq: 15081},
-        {word : '不错', freq: 10388},
-        {word : '味道', freq: 8084},
-        {word : '好吃', freq: 5550},
-        {word : '喜欢', freq: 5362},
-        {word : '服务', freq: 5222},
-        {word : '感觉', freq: 4867},
-        {word : '环境', freq: 3930},{word : '价格', freq: 3121},{word : '贵', freq: 2025},
+      category:[
+        '口味',
+        '环境',
+        '服务'
       ],
+      barData : [ 0.70, 0.50, 0.30],
+      hotwords: [],
+      // hotwords: [
+      //   {word : '吃', freq: 15081},
+      //   {word : '不错', freq: 10388},
+      //   {word : '味道', freq: 8084},
+      //   {word : '好吃', freq: 5550},
+      //   {word : '喜欢', freq: 5362},
+      //   {word : '服务', freq: 5222},
+      //   {word : '感觉', freq: 4867},
+      //   {word : '环境', freq: 3930},{word : '价格', freq: 3121},{word : '贵', freq: 2025},
+      // ],
+      pic :'',
       url: 'https://img-blog.csdnimg.cn/a73d8f490ddb48f1bc5d2388dd78ad68.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAQmVmb3JlRWFzeQ==,size_15,color_FFFFFF,t_70,g_se,x_16'
     }
   },
   mounted() {
     this.$nextTick(() => {
-      this.barGraph()
+      this.requestWordCloud()
+      this.requestLineChartData()
+      this.requestWordTop()
     })
   },
   methods: {
+    requestLineChartData() {
+      this.axios.get("/dash_asp_rate").then(
+          res => {
+            console.log(res.data.status)
+            var status = res.data.status
+            if (status == 0) {
+
+              this.category = res.data.asp_list
+              this.barData = res.data.num_list
+              this.barGraph()
+            }
+          }
+      ).catch(res => {
+        console.log(res.data.status)
+        console.log(res.data.msg)
+      })
+    },
+    requestWordCloud() {
+      this.axios.get("/wordcloud").then(
+          res => {
+            // console.log(res.data.status)
+            // var status = res.data.status
+            // if (status == 0) {
+              this.pic = res.data
+              console.log('finish pic')
+            // }
+          }
+      ).catch(res => {
+        console.log(res.data.status)
+        console.log(res.data.msg)
+      })
+    },
+    requestWordTop() {
+      this.axios.get("/wordTop").then(
+          res => {
+            console.log(res.data.status)
+            var status = res.data.status
+            if (status == 0) {
+              this.hotwords = res.data.wordTop
+            }
+          }
+      ).catch(res => {
+        console.log(res.data.status)
+        console.log(res.data.msg)
+      })
+    },
     barGraph() {
       // var myChart = this.$echarts.init(this.$refs['echart-right'])
       var myChart = echarts.init(this.$refs['echart-right'])
-      var category = [
-        '口味',
-        '味道',
-        '环境',
-        '服务'
-      ]
-      var barData = [0.82, 0.70, 0.50, 0.30]
+      // var category = this.category
+      // var barData = [0.82, 0.70, 0.50, 0.30]
       var option = {
         title: {
           text: '包含aspect的文本数占比'
@@ -143,7 +199,7 @@ export default {
         },
         yAxis: {
           type: 'category',
-          data: category,
+          data: this.category,
           splitLine: { show: false },
           axisLine: {
             show: false
@@ -160,7 +216,7 @@ export default {
           {
             name: '占比',
             type: 'bar',
-            data: barData,
+            data: this.barData,
             barWidth: 14,
             barGap: 10,
             smooth: true,

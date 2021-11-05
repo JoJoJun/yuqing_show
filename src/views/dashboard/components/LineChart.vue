@@ -61,7 +61,7 @@ export default {
       this.chart = echarts.init(this.$el, 'macarons')
       this.setOptions(this.chartData)
     },
-    setOptions({ expectedData, actualData } = {}) {
+    setOptions({ PosData, NegData } = {}) {
       this.chart.setOption({
         xAxis: {
           data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -104,7 +104,7 @@ export default {
           },
           smooth: true,
           type: 'line',
-          data: expectedData,
+          data: PosData,
           animationDuration: 2800,
           animationEasing: 'cubicInOut'
         },
@@ -124,7 +124,7 @@ export default {
               }
             }
           },
-          data: actualData,
+          data: NegData,
           animationDuration: 2800,
           animationEasing: 'quadraticOut'
         }]

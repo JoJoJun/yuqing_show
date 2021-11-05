@@ -27,12 +27,16 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      chartX: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      chartY: [79, 52, 200, 334, 390, 330, 220]
     }
   },
   mounted() {
+
     this.$nextTick(() => {
-      this.initChart()
+      // this.initChart()
+      this.requestLineChartData()
     })
   },
   beforeDestroy() {
@@ -43,6 +47,23 @@ export default {
     this.chart = null
   },
   methods: {
+    requestLineChartData() {
+      this.axios.get("/dash_new_labeled").then(
+          res => {
+            console.log(res.data.status)
+            var status = res.data.status
+            if (status == 0) {
+              // console.log("status is 0,  = ",res.data.pos_list)
+              this.chartX = res.data.week_list
+              this.chartY = res.data.dates_list
+              this.initChart()
+            }
+          }
+      ).catch(res => {
+        console.log(res.data.status)
+        console.log(res.data.msg)
+      })
+    },
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
 
@@ -65,7 +86,7 @@ export default {
         },
         xAxis: [{
           type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: this.chartX,
           axisTick: {
             alignWithLabel: true
           }
@@ -81,7 +102,7 @@ export default {
           type: 'bar',
           stack: 'vistors',
           barWidth: '60%',
-          data: [79, 52, 200, 334, 390, 330, 220],
+          data: this.chartY,
           animationDuration
            },
           // {

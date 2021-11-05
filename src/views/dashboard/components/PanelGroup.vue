@@ -1,7 +1,7 @@
 <template>
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
+      <div class="card-panel" >
         <div class="card-panel-icon-wrapper icon-documentation">
           <svg-icon icon-class="documentation" class-name="card-panel-icon" />
         </div>
@@ -9,7 +9,7 @@
           <div class="card-panel-text">
             舆情文本数
           </div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="all_texts" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -20,9 +20,9 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            标记数据数
+            新标记数据数
           </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="new_sents" :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -35,7 +35,7 @@
           <div class="card-panel-text">
             已预测数
           </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="predicted_num" :duration="3200" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -48,7 +48,7 @@
           <div class="card-panel-text">
             aspect数
           </div>
-          <count-to :start-val="0" :end-val="4" :duration="3600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="aspect_num" :duration="3600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -57,14 +57,52 @@
 
 <script>
 import CountTo from 'vue-count-to'
-
+import axios from 'axios'
 export default {
   components: {
     CountTo
   },
+  data() {
+    return {
+      all_texts: 3000,
+      new_sents: 200,
+      predicted_num: 300,
+      aspect_num : 5
+    }
+  },
+  mounted() {
+    this.requestNums()
+  },
   methods: {
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)
+    },
+    requestNums() {
+        console.log("in panelGroup")
+        // this.$router.push({ path: '/' })
+        // var param = {
+        //   'username': this.loginForm.username,
+        //   'password': this.loginForm.password
+        // }
+        // console.log(param.username)
+        this.axios.get("/all_nums").then(
+            res => {
+              console.log(res.data.status)
+              console.log(res.data.sentsAll)
+              var status = res.data.status
+              if (status == 0) {
+                console.log("status is 0")
+                // this.$router.push({ path: this.redirect || '/' })
+                this.all_texts = res.data.sentsAll
+                this.new_sents = res.data.sentsnew
+                this.predicted_num = res.data.sentsPredict
+                this.aspect_num = res.data.aspectAll
+              }
+            }
+        ).catch(res => {
+          console.log(res.data.status)
+          console.log(res.data.msg)
+        })
     }
   }
 }

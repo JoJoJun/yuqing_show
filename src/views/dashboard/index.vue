@@ -38,10 +38,11 @@ import PieChart from './components/PieChart'
 import BarChart from './components/BarChart'
 import echarts from 'echarts'
 require('echarts/theme/macarons')
+import axios from 'axios'
 const lineChartData = {
   newVisitis: {
-    expectedData: [100, 120, 161, 134, 105, 160, 165],
-    actualData: [120, 82, 91, 154, 162, 140, 145]
+    PosData: [100, 120, 161, 134, 105, 160, 165],
+    NegData: [120, 82, 91, 154, 162, 140, 145]
   },
 }
 export default {
@@ -60,10 +61,14 @@ export default {
   },
   data() {
     return {
-      lineChartData: lineChartData.newVisitis
+      lineChartData: lineChartData.newVisitis,
+      chart1XData:['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      chart1YData:[500, 600, 450, 300, 200, 300, 500]
     }
   },
   mounted() {
+    this.requestLineChartData()
+    this.requestBar1ChartData()
     this.drawChart()
   },
   methods: {
@@ -73,6 +78,7 @@ export default {
     },
     drawChart() {
       // const myEchart = this.$echarts.init(document.getElementById('all_text_num_chart'));
+      console.log("in draw chart data:",this.chart1YData);
       var myEchart = echarts.init(document.getElementById('all_text_num_chart'));
       const option = {
         title: {
@@ -83,16 +89,49 @@ export default {
           data: ['文本数量']
         },
         xAxis: {
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          data: this.chart1XData
         },
         yAxis: {},
         series: [{
           name: '文本数量',
           type: 'bar',
-          data: [500, 600, 450, 300, 200, 300, 500]
+          data: this.chart1YData
         }]
       };
       myEchart.setOption(option);
+    },
+    requestLineChartData() {
+      this.axios.get("/dash_line").then(
+          res => {
+            console.log(res.data.status)
+            var status = res.data.status
+            if (status == 0) {
+              console.log("status is 0, pos_list = ",res.data.pos_list)
+              this.lineChartData = res.data.data_dict
+            }
+          }
+      ).catch(res => {
+        console.log(res.data.status)
+        console.log(res.data.msg)
+      })
+    },
+    requestBar1ChartData() {
+      this.axios.get("/dash_new_origin").then(
+          res => {
+            // console.log(res.data.status)
+            var status = res.data.status
+            if (status == 0) {
+              console.log(" week_list = ",res.data.week_list)
+              this.chart1XData = res.data.week_list
+              this.chart1YData = res.data.dates_list
+              // console.log("data:",this.chart1YData)
+              this.drawChart()
+            }
+          }
+      ).catch(res => {
+        console.log(res.data.status)
+        console.log(res.data.msg)
+      })
     }
   },
 }
