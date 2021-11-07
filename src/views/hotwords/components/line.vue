@@ -1,15 +1,30 @@
 <template>
   <div class="chart-container">
-    <chart height="100%" width="100%" />
+    <chart :aspect="aspect" height="100%" width="100%" :line-data-x="LineDataX" :line-data-y="LineDataY" />
   </div>
 </template>
 
 <script>
 import Chart from '@/components/Charts/LineMarker'
+// import Chart from './LineMarker'
 
 export default {
   name: 'LineChart',
-  components: { Chart }
+  components: { Chart },
+  props: {
+    aspect: {
+      type: String,
+      default: '口味'
+    },
+    LineDataX: {
+      type: Object,
+      required: true
+    },
+    LineDataY: {
+      type: Object,
+      required: true
+    }
+  }
 }
 </script>
 

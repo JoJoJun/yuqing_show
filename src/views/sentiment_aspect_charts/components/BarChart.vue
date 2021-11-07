@@ -23,11 +23,30 @@ export default {
     height: {
       type: String,
       default: '300px'
+    },
+    // aspect: {
+    //   type: String,
+    //   default: '口味'
+    // },
+    chartData: {
+      type: Object,
+      required: true
     }
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      // dataX:['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      // dataPos:[20, 48, 48, 77, 72, 60, 30],
+      // dataNeg:[80, 52, 52, 23, 28, 40, 70]
+    }
+  },
+  watch: {
+    chartData: {
+      deep: true,
+      handler(val) {
+        this.setOptions(val)
+      }
     }
   },
   mounted() {
@@ -43,12 +62,10 @@ export default {
     this.chart = null
   },
   methods: {
-    initChart() {
-      this.chart = echarts.init(this.$el, 'infographic')
-
+    setOptions({aspect, dataX, dataPos, dataNeg } = {}) {
       this.chart.setOption({
         title: {
-          text: '围绕服务的情感变化'
+          text: '围绕'+aspect+'的情感变化'
         },
         tooltip: {
           trigger: 'axis',
@@ -65,7 +82,7 @@ export default {
         },
         xAxis: [{
           type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: dataX,
           axisTick: {
             alignWithLabel: true
           }
@@ -81,35 +98,103 @@ export default {
           type: 'bar',
           stack: 'vistors',
           barWidth: '60%',
-          data: [20, 48, 48, 77, 72, 60, 30],
+          data: dataPos,
           animationDuration
-           },
-        //   {
-        //   name: 'pageC',
-        //   type: 'bar',
-        //   stack: 'vistors',
-        //   barWidth: '60%',
-        //   data: [30, 52, 200, 334, 390, 330, 220],
-        //   animationDuration
-        // },
+        },
+          //   {
+          //   name: 'pageC',
+          //   type: 'bar',
+          //   stack: 'vistors',
+          //   barWidth: '60%',
+          //   data: [30, 52, 200, 334, 390, 330, 220],
+          //   animationDuration
+          // },
           {
-          name: '负向',
-          type: 'bar',
-          stack: 'vistors',
-          barWidth: '60%',
-          data: [80, 52, 52, 23, 28, 40, 70],
-          animationDuration
-        }
+            name: '负向',
+            type: 'bar',
+            stack: 'vistors',
+            barWidth: '60%',
+            data: dataNeg,
+            animationDuration
+          }
           // {
-        //   name: 'pageC',
-        //   type: 'bar',
-        //   stack: 'vistors',
-        //   barWidth: '60%',
-        //   data: [30, 52, 200, 334, 390, 330, 220],
-        //   animationDuration
-        // }
+          //   name: 'pageC',
+          //   type: 'bar',
+          //   stack: 'vistors',
+          //   barWidth: '60%',
+          //   data: [30, 52, 200, 334, 390, 330, 220],
+          //   animationDuration
+          // }
         ]
       })
+    },
+    initChart() {
+      this.chart = echarts.init(this.$el, 'infographic')
+      this.setOptions(this.chartData)
+      // this.chart.setOption({
+      //   title: {
+      //     text: '围绕'+this.aspect+'的情感变化'
+      //   },
+      //   tooltip: {
+      //     trigger: 'axis',
+      //     axisPointer: { // 坐标轴指示器，坐标轴触发有效
+      //       type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+      //     }
+      //   },
+      //   grid: {
+      //     top: 30,
+      //     left: '2%',
+      //     right: '2%',
+      //     bottom: '3%',
+      //     containLabel: true
+      //   },
+      //   xAxis: [{
+      //     type: 'category',
+      //     data: this.dataX,
+      //     axisTick: {
+      //       alignWithLabel: true
+      //     }
+      //   }],
+      //   yAxis: [{
+      //     type: 'value',
+      //     axisTick: {
+      //       show: false
+      //     }
+      //   }],
+      //   series: [{
+      //     name: '正向',
+      //     type: 'bar',
+      //     stack: 'vistors',
+      //     barWidth: '60%',
+      //     data: this.dataPos,
+      //     animationDuration
+      //      },
+      //   //   {
+      //   //   name: 'pageC',
+      //   //   type: 'bar',
+      //   //   stack: 'vistors',
+      //   //   barWidth: '60%',
+      //   //   data: [30, 52, 200, 334, 390, 330, 220],
+      //   //   animationDuration
+      //   // },
+      //     {
+      //     name: '负向',
+      //     type: 'bar',
+      //     stack: 'vistors',
+      //     barWidth: '60%',
+      //     data: this.dataNeg,
+      //     animationDuration
+      //   }
+      //     // {
+      //   //   name: 'pageC',
+      //   //   type: 'bar',
+      //   //   stack: 'vistors',
+      //   //   barWidth: '60%',
+      //   //   data: [30, 52, 200, 334, 390, 330, 220],
+      //   //   animationDuration
+      //   // }
+      //   ]
+      // })
     }
   }
 }

@@ -29,11 +29,11 @@ export default {
       type: String,
       default: '口味'
     },
-    LineDataX: {
+    dataX: {
       type: Object,
       required: true
     },
-    LineDataY: {
+    dataY: {
       type: Object,
       required: true
     }
@@ -41,18 +41,15 @@ export default {
   data() {
     return {
       chart: null,
-      dataX: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri','Sat', 'Sun'],
-      dataY: [22, 18, 19, 13.98, 15.04, 1.20, 10, 12, 14, 12.22, 16.5, 12.2]
+      // dataX: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri','Sat', 'Sun'],
+      // dataY: [22, 18, 19, 13.98, 15.04, 1.20, 10, 12, 14, 12.22, 16.5, 12.2]
     }
   },
   mounted() {
     this.$nextTick(() => {
-      console.log("in lineMarker,this aspect =",this.aspect)
-      console.log("in line marker datay=",this.LineDataY)
-      this.initChart(LineDataX, LineDataY)
-      // console.log('finish initchart')
+      this.initChart()
+      // console.log("in lineMarker aspect=",this.aspect)
       // this.requestaspNums(this.aspect)
-      // console.log("finish request")
     })
   },
   beforeDestroy() {
@@ -62,35 +59,9 @@ export default {
     this.chart.dispose()
     this.chart = null
   },
-  // watch: {
-  //   chartData: {
-  //     deep: true,
-  //     handler(val) {
-  //       this.setOptions(val)
-  //     }
-  //   }
-  // },
   methods: {
-    requestaspNums(aspect) {
-      this.axios.post('/aspect_day_nums', {
-        aspect: aspect
-      }, { emulateJSON: true }).then(
-          res => {
-            console.log('in aspect_day_nums,status = ',res.data.status)
-            var status = res.data.status
-            if (status == 0) {
-              this.dataX = res.data.week_list
-              this.dataY = res.data.freq_list
-              console.log('finish asp day num, dataY = ',this.dataY)
-              this.initChart()
-            }
-          }
-      ).catch(res => {
-        console.log(res.data.status)
-        console.log(res.data.msg)
-      })
-    },
-    initChart(LineDataX, LineDataY) {
+
+    initChart(dataX, dataY) {
       this.chart = echarts.init(document.getElementById(this.id))
 
       this.chart.setOption({
@@ -143,8 +114,7 @@ export default {
             }
           },
           // data: ['13:00', '13:05', '13:10', '13:15', '13:20', '13:25', '13:30', '13:35', '13:40', '13:45', '13:50', '13:55']
-          // data: this.dataX
-          data: LineDataX
+          data: dataX
         }],
         yAxis: [{
           type: 'value',
@@ -202,8 +172,7 @@ export default {
 
             }
           },
-          // data: this.dataY
-          data: LineDataY
+          data: dataY
         },
         //   {
         //   name: 'CTCC',

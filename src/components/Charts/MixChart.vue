@@ -28,11 +28,54 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      dataPos: [
+        709,
+        1917,
+        2455,
+        2610,
+        1719,
+        1433,
+        1544,
+        3285,
+        5208,
+        3372,
+        2484,
+        4078
+      ],
+      dataNeg: [
+        327,
+        1776,
+        507,
+        1200,
+        800,
+        482,
+        204,
+        1390,
+        1001,
+        951,
+        381,
+        220
+      ],
+      dataNeu: [
+        1036,
+        693,
+        962,
+        810,
+        519,
+        915,
+        1748,
+        675,
+        1209,
+        1323,
+        865,
+        1298
+      ]
     }
   },
   mounted() {
-    this.initChart()
+    // this.initChart()
+    this.requestData()
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -42,6 +85,23 @@ export default {
     this.chart = null
   },
   methods: {
+    requestData() {
+      this.axios.get('/senti/all_sent_7day').then(
+        res => {
+          console.log(res.data.status)
+          var status = res.data.status
+          if (status == 0) {
+            this.dataPos = res.data.cnt_list_pos
+            this.dataNeu = res.data.cnt_list_neu
+            this.dataNeg = res.data.cnt_list_neg
+            this.initChart()
+          }
+        }
+      ).catch(res => {
+        console.log(res.data.status)
+        console.log(res.data.msg)
+      })
+    },
     initChart() {
       this.chart = echarts.init(document.getElementById(this.id))
       const xData = (function() {
@@ -183,20 +243,7 @@ export default {
               }
             }
           },
-          data: [
-            709,
-            1917,
-            2455,
-            2610,
-            1719,
-            1433,
-            1544,
-            3285,
-            5208,
-            3372,
-            2484,
-            4078
-          ]
+          data: this.dataPos
         },
 
         {
@@ -216,20 +263,7 @@ export default {
               }
             }
           },
-          data: [
-            327,
-            1776,
-            507,
-            1200,
-            800,
-            482,
-            204,
-            1390,
-            1001,
-            951,
-            381,
-            220
-          ]
+          data: this.dataNeg
         }, {
           name: '中性',
           type: 'line',
@@ -249,20 +283,7 @@ export default {
               }
             }
           },
-          data: [
-            1036,
-            693,
-            962,
-            810,
-            519,
-            915,
-            1748,
-            675,
-            1209,
-            1323,
-            865,
-            1298
-          ]
+          data: this.dataNeu
         }
         ]
       })

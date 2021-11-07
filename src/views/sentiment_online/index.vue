@@ -57,19 +57,9 @@
         label="模型版本"
         width="150"
       />
-      <el-table-column
-        prop="start_date"
-        label="开始训练日期"
-        width="200"
-      />
        <el-table-column
         prop="end_date"
         label="结束训练日期"
-        width="200"
-      />
-       <el-table-column
-        prop="pretraining_size"
-        label="预训练数据规模"
         width="200"
       />
        <el-table-column
@@ -77,6 +67,11 @@
         label="状态"
         width="200"
       />
+       <el-table-column
+           prop="pretraining_size"
+           label="预训练规模"
+           width="200"
+       />
     </el-table>
          </el-col>
        </el-row>
@@ -115,6 +110,20 @@ export default {
     }
   },
   methods: {
+    requestTable() {
+      this.axios.get('/senti/model_info').then(
+          res => {
+            console.log(res.data.status)
+            var status = res.data.status
+            if (status == 0) {
+              this.tableData = res.data.table_data
+            }
+          }
+      ).catch(res => {
+        console.log(res.data.status)
+        console.log(res.data.msg)
+      })
+    },
     onSubmit() {
       this.$message({
         message: '反馈成功!',
