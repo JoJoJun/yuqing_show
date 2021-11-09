@@ -98,10 +98,11 @@ export const constantRoutes = [
         meta: { title: '细粒度情感', icon: 'table' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/sentiment_online/index'),
-        meta: { title: '在线分析', icon: 'tree' }
+        path: 'feedback',
+        name: 'feedback',
+        // component: () => import('@/views/sentiment_online/index'),
+        component: () => import('@/views/sentiment_fb/index'),
+        meta: { title: '反馈结果', icon: 'tree' }
       }
     ]
   },
